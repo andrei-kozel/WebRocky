@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +27,32 @@ namespace WebRocky.Controllers
             }
 
             return View(objectList);
+        }
+
+        public IActionResult Upsert(int? id)
+        {
+            IEnumerable<SelectListItem> CategoryDropDown = _db.Category.Select(i => new SelectListItem
+            {
+                Text = i.Name,
+                Value = i.Id.ToString(),
+            });
+            Product product = new Product();
+
+            ViewBag.CategoryDropDown = CategoryDropDown;
+
+            if (id == null)
+            {
+                return View(product);
+            }
+            else
+            {
+                product = _db.Product.Find(id);
+                if (product == null)
+                {
+                    return NotFound();
+                }
+                return View(product);
+            }
         }
 
     }
